@@ -1,0 +1,57 @@
+{
+  "name": "i18n-from-csv",
+  "displayName": "i18n-from-csv",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:csv-i18n"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "i18n-from-csv.helloWorld",
+        "title": "Hello World"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "csvI18n",
+          "title": "i18n from CSV",
+          "icon": "resources/icon.png"
+        }
+      ]
+    },
+    "views": {
+      "csvI18n": [
+        {
+          "id": "csv-i18n",
+          "name": "csv-i18n"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "yarn run lint",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.9",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.95.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.13.0"
+  },
+  "dependencies": {
+    "csvtojson": "^2.0.10"
+  }
+}
