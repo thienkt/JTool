@@ -13,9 +13,6 @@ function writeJSON(dirPath, data) {
   if (!locales.length) return;
 
   const localesData = getLocalesData(dirPath, locales);
-  vscode.window.showInformationMessage(
-    "File written to: " + JSON.stringify(data)
-  );
 
   data.forEach((row) => {
     if (!row.key) return;
@@ -32,9 +29,9 @@ function writeJSON(dirPath, data) {
       JSON.stringify(localesData[locale], null, 2),
       (err) => {
         if (err) {
-          vscode.window.showErrorMessage("Error writing file: " + err.message);
+          vscode.window.showErrorMessage(`Error writing file: ${err.message}`);
         } else {
-          vscode.window.showInformationMessage("File written to: " + filePath);
+          vscode.window.showInformationMessage(`File written to:  ${locale}.json`);
         }
       }
     );

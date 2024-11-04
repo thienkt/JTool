@@ -17,7 +17,7 @@ function activate(context) {
   const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri;
 
   const selectLocalePath = vscode.commands.registerCommand(
-    "i18n-from-csv.selectLocalePath",
+    "CSV-i18n.selectLocalePath",
     async () => {
       const options = {
         canSelectMany: false,
@@ -38,7 +38,7 @@ function activate(context) {
   );
 
   const selectCSVFile = vscode.commands.registerCommand(
-    "i18n-from-csv.selectCSVFile",
+    "CSV-i18n.selectCSVFile",
     async () => {
       const [header, ...data] = await readCSV();
       writeJSON(myTreeDataProvider.currentLocalePath, data);

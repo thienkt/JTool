@@ -1,8 +1,9 @@
 {
-  "name": "i18n-from-csv",
-  "displayName": "i18n-from-csv",
+  "name": "CSV-i18n",
+  "displayName": "CSV-i18n",
   "description": "",
   "version": "0.0.1",
+  "publisher": "thientk",
   "engines": {
     "vscode": "^1.95.0"
   },
@@ -13,19 +14,15 @@
     "onView:csv-i18n"
   ],
   "main": "./extension.js",
+  "icon": "resources/icon.png",
   "contributes": {
-    "commands": [
-      {
-        "command": "i18n-from-csv.helloWorld",
-        "title": "Hello World"
-      }
-    ],
+    "commands": [],
     "viewsContainers": {
       "activitybar": [
         {
           "id": "csvI18n",
-          "title": "i18n from CSV",
-          "icon": "resources/icon.png"
+          "title": "CSV-i18n",
+          "icon": "resources/icon-ab.png"
         }
       ]
     },

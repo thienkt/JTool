@@ -41,14 +41,14 @@ class MyTreeDataProvider {
     selectLocalePathItem.iconPath = vscode.ThemeIcon.Folder;
     selectLocalePathItem.description = `~/${this.relativePath}`;
     selectLocalePathItem.command = {
-      command: "i18n-from-csv.selectLocalePath",
+      command: "CSV-i18n.selectLocalePath",
       title: "Select Locale Path",
     };
 
     const uploadItem = new vscode.TreeItem("Select CSV file");
     uploadItem.iconPath = vscode.ThemeIcon.File;
     uploadItem.command = {
-      command: "i18n-from-csv.selectCSVFile",
+      command: "CSV-i18n.selectCSVFile",
       title: "Select CSV file",
     };
 
