@@ -1,30 +1,10 @@
 const vscode = require("vscode");
 const path = require("path");
-const fs = require("fs");
+const { getJSONFiles } = require("../functions/getJSONFile");
 
 const workspaceFolder = path.normalize(
   vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || ""
 );
-
-const getFiles = (folderPath) => {
-  try {
-    return fs
-      .readdirSync(folderPath)
-      .filter((file) => /^.+\.json$/.test(file))
-      .map((file) => {
-        const item = new vscode.TreeItem("");
-        item.description = file;
-        item.command = {
-          command: "vscode.open",
-          title: "Open File",
-          arguments: [vscode.Uri.file(path.join(folderPath, file))],
-        };
-        return item;
-      });
-  } catch (error) {
-    return [];
-  }
-};
 
 class MyTreeDataProvider {
   constructor() {
@@ -46,7 +26,16 @@ class MyTreeDataProvider {
   getChildren(element) {
     if (element) return [];
 
-    const files = getFiles(this.currentLocalePath);
+    const files = getJSONFiles(this.currentLocalePath).map((file) => {
+      const item = new vscode.TreeItem("");
+      item.description = file;
+      item.command = {
+        command: "vscode.open",
+        title: "Open File",
+        arguments: [vscode.Uri.file(path.join(this.currentLocalePath, file))],
+      };
+      return item;
+    });
 
     const selectLocalePathItem = new vscode.TreeItem("Locales Path");
     selectLocalePathItem.iconPath = vscode.ThemeIcon.Folder;

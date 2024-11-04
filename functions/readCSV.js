@@ -1,23 +1,31 @@
 const vscode = require("vscode");
-const fs = require("fs");
-const path = require("path");
 const csv = require("csvtojson");
 
-async function readCSV(filePath) {
+async function readCSV() {
   try {
-    const jsonArray = await csv({
-        noheader: false,
-        headers: ['key','en', 'ja', 'cn', 'kr']
-    }).fromFile(filePath);
-    vscode.window.showInformationMessage("File content: " + jsonArray);
-    const newFilePath = path.join(path.dirname(filePath), "newFile.json");
-    fs.writeFile(newFilePath, JSON.stringify(jsonArray, null, 2), (err) => {
-      if (err) {
-        vscode.window.showErrorMessage("Error writing file: " + err.message);
-        return;
-      }
-      vscode.window.showInformationMessage("File written to: " + newFilePath);
-    });
+    const options = {
+      canSelectMany: false,
+      openLabel: "Open",
+      filters: {
+        "CSV files": ["csv"],
+        "All files": ["*"],
+      },
+    };
+
+    const fileUri = await vscode.window.showOpenDialog(options);
+
+    if (fileUri?.length) {
+      const filePath = fileUri[0].fsPath;
+
+      vscode.window.showInformationMessage(
+        "Selected file: " + fileUri[0].fsPath
+      );
+
+      return await csv({
+        trim: true,
+        headers: ["key", "en", "ja", "cn", "kr"],
+      }).fromFile(filePath);
+    }
   } catch (error) {
     vscode.window.showErrorMessage("Error reading file: " + error.message);
   }

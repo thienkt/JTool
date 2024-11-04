@@ -1,7 +1,8 @@
 const vscode = require("vscode");
-const { readCSV } = require("./functions/readCSV");
-
 const MyTreeDataProvider = require("./models/TreeDataProvider");
+
+const { readCSV } = require("./functions/readCSV");
+const { writeJSON } = require("./functions/writeJSON");
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -39,26 +40,8 @@ function activate(context) {
   const selectCSVFile = vscode.commands.registerCommand(
     "i18n-from-csv.selectCSVFile",
     async () => {
-      const options = {
-        canSelectMany: false,
-        openLabel: "Open",
-        filters: {
-          "CSV files": ["csv"],
-          "All files": ["*"],
-        },
-      };
-
-      const fileUri = await vscode.window.showOpenDialog(options);
-
-      if (fileUri?.length) {
-        const filePath = fileUri[0].fsPath;
-
-        vscode.window.showInformationMessage(
-          "Selected file: " + fileUri[0].fsPath
-        );
-
-        readCSV(filePath);
-      }
+      const [header, ...data] = await readCSV();
+      writeJSON(myTreeDataProvider.currentLocalePath, data);
     }
   );
 
