@@ -13,9 +13,31 @@ function activate(context) {
   const myTreeDataProvider = new MyTreeDataProvider();
 
   vscode.window.registerTreeDataProvider("csv-i18n", myTreeDataProvider);
+  const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri;
 
-  const disposable = vscode.commands.registerCommand(
-    "i18n-from-csv.uploadFile",
+  const selectLocalePath = vscode.commands.registerCommand(
+    "i18n-from-csv.selectLocalePath",
+    async () => {
+      const options = {
+        canSelectMany: false,
+        canSelectFiles: false,
+        canSelectFolders: true,
+        defaultUri: workspaceFolder,
+        title: "Select a directory",
+        openLabel: "Select",
+      };
+
+      const folderUri = await vscode.window.showOpenDialog(options);
+
+      if (folderUri?.length) {
+        const folderPath = folderUri[0].fsPath;
+        myTreeDataProvider.updateLocalePath(folderPath);
+      }
+    }
+  );
+
+  const selectCSVFile = vscode.commands.registerCommand(
+    "i18n-from-csv.selectCSVFile",
     async () => {
       const options = {
         canSelectMany: false,
@@ -28,7 +50,7 @@ function activate(context) {
 
       const fileUri = await vscode.window.showOpenDialog(options);
 
-      if (fileUri && fileUri[0]) {
+      if (fileUri?.length) {
         const filePath = fileUri[0].fsPath;
 
         vscode.window.showInformationMessage(
@@ -40,7 +62,7 @@ function activate(context) {
     }
   );
 
-  context.subscriptions.push(disposable);
+  context.subscriptions.push(selectCSVFile, selectLocalePath);
 }
 
 // This method is called when your extension is deactivated
