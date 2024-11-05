@@ -27,14 +27,3 @@ locales/
   ├── es.json
   └── fr.json
 ```
-
-## Packaging the Extension
-
-To package the extension using `vsce`, follow these steps:
-
-1. Install `vsce` if you haven't already:
-2. Navigate to the root directory of your extension.
-3. Run the following command to package your extension:
-```
-vsce package
-```
