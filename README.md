@@ -21,9 +21,20 @@ The `CSV-i18n` extension is a tool designed to simplify the process of internati
 ## Locales Folder Structure
 
 The generated JSON files will be organized in a folder structure like this:
-
+```
 locales/
   ├── en.json
   ├── es.json
   └── fr.json
-  
+```
+
+## Packaging the Extension
+
+To package the extension using `vsce`, follow these steps:
+
+1. Install `vsce` if you haven't already:
+2. Navigate to the root directory of your extension.
+3. Run the following command to package your extension:
+```
+vsce package
+```
