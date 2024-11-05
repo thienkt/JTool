@@ -40,7 +40,7 @@ function activate(context) {
   const selectCSVFile = vscode.commands.registerCommand(
     "CSV-i18n.selectCSVFile",
     async () => {
-      const [header, ...data] = await readCSV();
+      const data = await readCSV();
       writeJSON(myTreeDataProvider.currentLocalePath, data);
     }
   );
