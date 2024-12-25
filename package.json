@@ -1,6 +1,7 @@
 {
   "name": "CSV-i18n",
   "displayName": "CSV-i18n",
+  "repository": "https://github.com/thienkt/csv-i18n",
   "description": "",
   "version": "0.0.1",
   "publisher": "thientk",
