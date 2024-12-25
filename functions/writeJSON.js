@@ -33,7 +33,8 @@ async function writeJSON(dirPath, data) {
     if (!row.key) return;
     entries++;
     locales.forEach((locale) => {
-      localesData[locale].set(row.key, row[locale]);
+      const key = row.key?.replace(/\n/g, '');
+      key && localesData[locale].set(key, row[locale]);
     });
   });
 
