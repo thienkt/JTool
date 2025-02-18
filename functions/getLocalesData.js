@@ -9,6 +9,7 @@ const toBracketNotation = (key) =>
 const flattenObj = (obj, parentKey = "") => {
   let result = {};
   Object.keys(obj).forEach((key) => {
+    if(!/\w+/.test(key)) debugger;
     if (obj[key] != null && typeof obj[key] === "object") {
       result = {
         ...result,
@@ -55,7 +56,7 @@ function setValueByKey(key, value) {
   }
 }
 
-const getLocalesData = (path, files) => {
+const getLocalesData = (path, files, options = { flatten: false }) => {
   const getLang = (locale) => {
     const data = fs.readFileSync(`${path}/${locale}.json`, {
       encoding: "utf8",
@@ -70,10 +71,10 @@ const getLocalesData = (path, files) => {
   const data = {};
 
   files.forEach((file) => {
-    data[file] = getLang(file);
+    data[file] = !options.flatten ? getLang(file) : flattenObj(getLang(file));
   });
 
   return data;
 };
 
-module.exports = { getLocalesData };
+module.exports = { getLocalesData, flattenObj };

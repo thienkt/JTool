@@ -37,22 +37,29 @@ class MyTreeDataProvider {
       return item;
     });
 
-    const selectLocalePathItem = new vscode.TreeItem("Locales Path");
-    selectLocalePathItem.iconPath = vscode.ThemeIcon.Folder;
-    selectLocalePathItem.description = `~/${this.relativePath}`;
-    selectLocalePathItem.command = {
+    const itemSelectPath = new vscode.TreeItem("Locales Path");
+    itemSelectPath.iconPath = vscode.ThemeIcon.Folder;
+    itemSelectPath.description = `~/${this.relativePath}`;
+    itemSelectPath.command = {
       command: "CSV-i18n.selectLocalePath",
       title: "Select Locale Path",
     };
 
-    const uploadItem = new vscode.TreeItem("Select CSV file");
-    uploadItem.iconPath = vscode.ThemeIcon.File;
-    uploadItem.command = {
+    const itemUpload = new vscode.TreeItem("Select CSV file");
+    itemUpload.iconPath = vscode.ThemeIcon.File;
+    itemUpload.command = {
       command: "CSV-i18n.selectCSVFile",
       title: "Select CSV file",
     };
 
-    return [selectLocalePathItem, ...files, uploadItem];
+    const itemExportCSV = new vscode.TreeItem("Export CSV file");
+    itemExportCSV.iconPath = vscode.ThemeIcon.Folder;
+    itemExportCSV.command = {
+      command: "CSV-i18n.exportCSVFile",
+      title: "Export CSV file",
+    };
+
+    return [itemSelectPath, ...files, itemUpload, itemExportCSV];
   }
 
   refresh() {

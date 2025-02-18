@@ -1,8 +1,9 @@
 const vscode = require("vscode");
-const MyTreeDataProvider = require("./models/TreeDataProvider");
+const MyTreeDataProvider = require("./providers/TreeDataProvider");
 
 const { readCSV } = require("./functions/readCSV");
 const { writeJSON } = require("./functions/writeJSON");
+const { exportCSV } = require("./functions/exportCSV");
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -45,7 +46,14 @@ function activate(context) {
     }
   );
 
-  context.subscriptions.push(selectCSVFile, selectLocalePath);
+  const exportCSVFile = vscode.commands.registerCommand(
+    "CSV-i18n.exportCSVFile",
+    async () => {
+      exportCSV(myTreeDataProvider.currentLocalePath);
+    }
+  );
+
+  context.subscriptions.push(selectCSVFile, selectLocalePath, exportCSVFile);
 }
 
 // This method is called when your extension is deactivated

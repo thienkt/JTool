@@ -23,7 +23,7 @@ async function readCSV() {
 
       return await csv({
         trim: true,
-        headers: ["key", "en", "ja", "cn", "kr"],
+        // headers: ["key", "en", "ja", "cn", "kr"],
       }).fromFile(filePath);
     }
   } catch (error) {

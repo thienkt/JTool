@@ -1,22 +1,9 @@
 const vscode = require("vscode");
-const fs = require("fs");
 const path = require("path");
 
 const { getJSONFiles } = require("./getJSONFile");
 const { getLocalesData } = require("./getLocalesData");
-
-async function writeFile(filePath, data) {
-  return new Promise((resolve, reject) => {
-    fs.writeFile(filePath, JSON.stringify(data, null, 2), (err) => {
-      if (err) {
-        vscode.window.showErrorMessage(`Error writing file: ${err.message}`);
-        reject(err);
-      } else {
-        resolve(filePath);
-      }
-    });
-  });
-}
+const { writeFile } = require("./writeFile");
 
 async function writeJSON(dirPath, data) {
   const locales = getJSONFiles(dirPath).map((file) =>
@@ -33,7 +20,7 @@ async function writeJSON(dirPath, data) {
     if (!row.key) return;
     entries++;
     locales.forEach((locale) => {
-      const key = row.key?.replace(/\n/g, '');
+      const key = row.key?.replace(/\n/g, "");
       key && localesData[locale].set(key, row[locale]);
     });
   });
@@ -43,7 +30,7 @@ async function writeJSON(dirPath, data) {
   await Promise.all(
     locales.map(async (locale) => {
       const filePath = path.join(dirPath, `${locale}.json`);
-      await writeFile(filePath, localesData[locale]);
+      await writeFile(filePath, JSON.stringify(localesData[locale], null, 2));
       files.push(`${locale}.json`);
     })
   );
