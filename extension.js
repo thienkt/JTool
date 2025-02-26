@@ -4,7 +4,8 @@ const MyTreeDataProvider = require("./providers/TreeDataProvider");
 const { readCSV } = require("./functions/readCSV");
 const { writeJSON } = require("./functions/writeJSON");
 const { exportCSV } = require("./functions/exportCSV");
-const { compareHTML } = require("./functions/compareHTML");
+const { compareHTML, updateYAMLFiles } = require("./functions/compareHTML");
+const { getAttributesMap } = require("./functions/compareHTML");
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -57,12 +58,44 @@ function activate(context) {
   const compareHTMLStructure = vscode.commands.registerCommand(
     "JTool.compareHTMLStructure",
     async () => {
-      const data = await compareHTML();
-      vscode.window.showInformationMessage("HTML comparison completed.");
+      await compareHTML(myTreeDataProvider);
+      // vscode.window.showInformationMessage("HTML comparison completed.");
     }
   );
 
-  context.subscriptions.push(selectCSVFile, selectDir, exportCSVFile, compareHTMLStructure);
+  const showAttributesChecklist = vscode.commands.registerCommand(
+    "JTool.showAttributesChecklist",
+    async () => {
+      const attributesMap = getAttributesMap();
+      const items = Object.keys(attributesMap).map((attr) => ({
+        label: attr,
+        picked: attributesMap[attr],
+      }));
+
+      const selectedItems = await vscode.window.showQuickPick(items, {
+        canPickMany: true,
+        placeHolder: "Select attributes to compare",
+      });
+
+      if (selectedItems) {
+        Object.keys(attributesMap).forEach((attr) => {
+          attributesMap[attr] = selectedItems.some(
+            (item) => item.label === attr
+          );
+        });
+        updateYAMLFiles();
+        myTreeDataProvider.refresh(); // Refresh the tree data
+      }
+    }
+  );
+
+  context.subscriptions.push(
+    selectCSVFile,
+    selectDir,
+    exportCSVFile,
+    compareHTMLStructure,
+    showAttributesChecklist
+  );
 }
 
 // This method is called when your extension is deactivated

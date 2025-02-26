@@ -1,6 +1,7 @@
 const vscode = require("vscode");
 const path = require("path");
 const { getJSONFiles } = require("../functions/getJSONFile");
+const { getAttributesMap } = require("../functions/compareHTML");
 
 const workspaceFolder = path.normalize(
   vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || ""
@@ -70,12 +71,16 @@ class MyTreeDataProvider {
         ];
       }
       case "Compare HTML Structure": {
+        const attributesMap = getAttributesMap();
+        const hasAttributes = Object.keys(attributesMap).length > 0;
         return [
-          this.createTreeItem(
-            "Compare HTML files",
-            "JTool.compareHTMLStructure"
-          ),
-        ];
+          this.createTreeItem("Input HTML", "JTool.compareHTMLStructure"),
+          hasAttributes &&
+            this.createTreeItem(
+              "Setting Attributes",
+              "JTool.showAttributesChecklist"
+            ),
+        ].filter(Boolean);
       }
       default: {
         const collapsible = vscode.TreeItemCollapsibleState.Collapsed;
