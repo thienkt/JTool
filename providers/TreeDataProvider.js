@@ -14,9 +14,41 @@ class MyTreeDataProvider {
   }
 
   get relativePath() {
-    return path
-      .relative(workspaceFolder, path.normalize(this.currentLocalePath))
-      .replace("\\", "/");
+    return (
+      "/" +
+      path
+        .relative(workspaceFolder, path.normalize(this.currentLocalePath))
+        .replace("\\", "/")
+    );
+  }
+
+  createTreeItem(
+    label,
+    command,
+    collapsibleState = vscode.TreeItemCollapsibleState.None
+  ) {
+    const newItem = new vscode.TreeItem(label, collapsibleState);
+    if (command) {
+      newItem.command = {
+        command: command,
+        title: label,
+      };
+    }
+    return newItem;
+  }
+
+  createFileItem(file) {
+    const item = new vscode.TreeItem(
+      file,
+      vscode.TreeItemCollapsibleState.None
+    );
+    item.iconPath = vscode.ThemeIcon.File;
+    item.command = {
+      command: "vscode.open",
+      title: "Open File",
+      arguments: [vscode.Uri.file(path.join(this.currentLocalePath, file))],
+    };
+    return item;
   }
 
   getTreeItem(element) {
@@ -24,42 +56,37 @@ class MyTreeDataProvider {
   }
 
   getChildren(element) {
-    if (element) return [];
+    switch (element?.label) {
+      case this.relativePath: {
+        return getJSONFiles(this.currentLocalePath).map((file) =>
+          this.createFileItem(file)
+        );
+      }
+      case "CSV and JSON Operations": {
+        return [
+          this.createTreeItem("Choose Directory", "JTool.selectDir"),
+          this.createTreeItem("Import CSV file", "JTool.selectCSVFile"),
+          this.createTreeItem("Export CSV file", "JTool.exportCSVFile"),
+        ];
+      }
+      case "Compare HTML Structure": {
+        return [
+          this.createTreeItem(
+            "Compare HTML files",
+            "JTool.compareHTMLStructure"
+          ),
+        ];
+      }
+      default: {
+        const collapsible = vscode.TreeItemCollapsibleState.Collapsed;
 
-    const files = getJSONFiles(this.currentLocalePath).map((file) => {
-      const item = new vscode.TreeItem("");
-      item.description = file;
-      item.command = {
-        command: "vscode.open",
-        title: "Open File",
-        arguments: [vscode.Uri.file(path.join(this.currentLocalePath, file))],
-      };
-      return item;
-    });
-
-    const itemSelectPath = new vscode.TreeItem("Locales Path");
-    itemSelectPath.iconPath = vscode.ThemeIcon.Folder;
-    itemSelectPath.description = `~/${this.relativePath}`;
-    itemSelectPath.command = {
-      command: "CSV-i18n.selectLocalePath",
-      title: "Select Locale Path",
-    };
-
-    const itemUpload = new vscode.TreeItem("Select CSV file");
-    itemUpload.iconPath = vscode.ThemeIcon.File;
-    itemUpload.command = {
-      command: "CSV-i18n.selectCSVFile",
-      title: "Select CSV file",
-    };
-
-    const itemExportCSV = new vscode.TreeItem("Export CSV file");
-    itemExportCSV.iconPath = vscode.ThemeIcon.Folder;
-    itemExportCSV.command = {
-      command: "CSV-i18n.exportCSVFile",
-      title: "Export CSV file",
-    };
-
-    return [itemSelectPath, ...files, itemUpload, itemExportCSV];
+        return [
+          new vscode.TreeItem(this.relativePath, collapsible),
+          new vscode.TreeItem(`CSV and JSON Operations`, collapsible),
+          new vscode.TreeItem("Compare HTML Structure", collapsible),
+        ];
+      }
+    }
   }
 
   refresh() {

@@ -4,6 +4,7 @@ const MyTreeDataProvider = require("./providers/TreeDataProvider");
 const { readCSV } = require("./functions/readCSV");
 const { writeJSON } = require("./functions/writeJSON");
 const { exportCSV } = require("./functions/exportCSV");
+const { compareHTML } = require("./functions/compareHTML");
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -14,11 +15,11 @@ const { exportCSV } = require("./functions/exportCSV");
 function activate(context) {
   const myTreeDataProvider = new MyTreeDataProvider();
 
-  vscode.window.registerTreeDataProvider("csv-i18n", myTreeDataProvider);
+  vscode.window.registerTreeDataProvider("JTool", myTreeDataProvider);
   const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri;
 
-  const selectLocalePath = vscode.commands.registerCommand(
-    "CSV-i18n.selectLocalePath",
+  const selectDir = vscode.commands.registerCommand(
+    "JTool.selectDir",
     async () => {
       const options = {
         canSelectMany: false,
@@ -39,7 +40,7 @@ function activate(context) {
   );
 
   const selectCSVFile = vscode.commands.registerCommand(
-    "CSV-i18n.selectCSVFile",
+    "JTool.selectCSVFile",
     async () => {
       const data = await readCSV();
       writeJSON(myTreeDataProvider.currentLocalePath, data);
@@ -47,13 +48,21 @@ function activate(context) {
   );
 
   const exportCSVFile = vscode.commands.registerCommand(
-    "CSV-i18n.exportCSVFile",
+    "JTool.exportCSVFile",
     async () => {
       exportCSV(myTreeDataProvider.currentLocalePath);
     }
   );
 
-  context.subscriptions.push(selectCSVFile, selectLocalePath, exportCSVFile);
+  const compareHTMLStructure = vscode.commands.registerCommand(
+    "JTool.compareHTMLStructure",
+    async () => {
+      const data = await compareHTML();
+      vscode.window.showInformationMessage("HTML comparison completed.");
+    }
+  );
+
+  context.subscriptions.push(selectCSVFile, selectDir, exportCSVFile, compareHTMLStructure);
 }
 
 // This method is called when your extension is deactivated

@@ -1,10 +1,10 @@
 {
-  "name": "CSV-i18n",
-  "displayName": "CSV-i18n",
-  "repository": "https://github.com/thienkt/csv-i18n",
+  "name": "JTool",
+  "displayName": "JTool",
+  "repository": "https://github.com/thienkt/JTool",
   "description": "",
   "version": "0.0.1",
-  "publisher": "thientk",
+  "publisher": "JTool",
   "engines": {
     "vscode": "^1.95.0"
   },
@@ -12,7 +12,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onView:csv-i18n"
+    "onView:JTool"
   ],
   "main": "./extension.js",
   "icon": "resources/icon.png",
@@ -21,16 +21,16 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "csvI18n",
-          "title": "CSV-i18n",
+          "id": "JTool",
+          "title": "JTool",
           "icon": "resources/icon-ab.png"
         }
       ]
     },
     "views": {
-      "csvI18n": [
+      "JTool": [
         {
-          "id": "csv-i18n",
+          "id": "JTool",
           "name": ""
         }
       ]
@@ -49,10 +49,10 @@
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
     "eslint": "^9.13.0",
-    "vsce": "^2.15.0"
+    "vsce": "^1.97.0"
   },
   "dependencies": {
     "csvtojson": "^2.0.10",
-    "json-2-csv": "3.6.1"
+    "json-2-csv": "^3.20.0"
   }
 }
