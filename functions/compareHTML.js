@@ -7,7 +7,9 @@ const { JSDOM } = require("jsdom");
 
 let isDiffShown = false;
 let onDidChangeEditorsDisposable;
-const attributesMap = {};
+const attributesMap = {
+  $selector: false,
+};
 
 const tempDir = os.tmpdir();
 const htmlMock = path.join(tempDir, "mock.html");
@@ -96,13 +98,13 @@ async function compareHTML(treeDataProvider) {
 }
 
 function extractElementInfo(element) {
-  function extractNode(node) {
+  function extractNode(node, parentSelector = "") {
     if (node.tagName.toLowerCase() === "script") {
       return null;
     }
 
     const info = {
-      tagName: node.tagName.toLowerCase(),
+      $tag: node.tagName.toLowerCase(),
       attributes: {},
       children: [],
     };
@@ -120,15 +122,39 @@ function extractElementInfo(element) {
     Array.from(node.attributes).forEach((attr) => {
       if (!attr.name.startsWith("data-") && attr.name !== "id") {
         if (attributesMap[attr.name] !== false) {
-          attributesMap[attr.name] = true;
-          info.attributes[attr.name] = attr.value?.trim();
+          if (attr.name === "class") {
+            if (attributesMap.$class === false) return;
+            attributesMap.$class = true;
+            info.$class = Array.from(node.classList).sort().join(" ");
+          } else {
+            attributesMap[attr.name] = true;
+            info.attributes[attr.name] = attr.value?.trim();
+          }
         }
       }
     });
 
+    const getSelector = (node) => {
+      // Add absolute query selector to attributes
+      let selector = node.tagName.toLowerCase();
+      if (node.id) {
+        selector += `#${node.id}`;
+      }
+      if (node.className) {
+        selector += `.${node.className.split(" ").join(".")}`;
+      }
+      info.$selector = parentSelector
+        ? `${parentSelector} > ${selector}`
+        : selector;
+    };
+
+    if (attributesMap.$selector) {
+      getSelector(node);
+    }
+
     // Recursively extract children and store them as an object
     Array.from(node.children).forEach((child) => {
-      const childInfo = extractNode(child);
+      const childInfo = extractNode(child, info.$selector);
       if (childInfo) {
         info.children ??= [];
         info.children.push(childInfo);
@@ -147,6 +173,9 @@ function getAttributesMap() {
 
 function updateYAMLFiles() {
   try {
+    Object.keys(attributesMap).forEach((attr) => {
+      if (attr !== "$selector") delete attributesMap[attr];
+    });
     // Parse HTML content
     const htmlMockContent = fs.readFileSync(htmlMock, "utf-8");
     const htmlDevContent = fs.readFileSync(htmlDev, "utf-8");
