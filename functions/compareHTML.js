@@ -7,6 +7,10 @@ const { JSDOM } = require("jsdom");
 
 let isDiffShown = false;
 let onDidChangeEditorsDisposable;
+let oldAttributesMap = {
+  $selector: false,
+};
+
 const attributesMap = {
   $selector: false,
 };
@@ -110,6 +114,7 @@ function extractElementInfo(element) {
     };
 
     // Extract innerText only if the element has no children
+    attributesMap.textContent = oldAttributesMap.textContent;
     if (node.children.length === 0 && attributesMap.textContent !== false) {
       const text = node.textContent?.replace(/(\s|\\n)+/g, " ").trim();
       if (text) {
@@ -120,18 +125,24 @@ function extractElementInfo(element) {
 
     // Extract non-data and non-id attributes
     Array.from(node.attributes).forEach((attr) => {
-      if (!attr.name.startsWith("data-") && attr.name !== "id") {
-        if (attributesMap[attr.name] !== false) {
-          if (attr.name === "class") {
-            if (attributesMap.$class === false) return;
-            attributesMap.$class = true;
-            info.$class = Array.from(node.classList).sort().join(" ");
-          } else {
-            attributesMap[attr.name] = true;
-            info.attributes[attr.name] = attr.value?.trim();
-          }
-        }
+      if (attr.name.startsWith("data-") || attr.name === "id") return;
+
+      if (attr.name === "class") {
+        attributesMap.$class = oldAttributesMap.$class;
+
+        if (attributesMap.$class === false) return;
+
+        attributesMap.$class = true;
+        info.$class = Array.from(node.classList).sort().join(" ");
+        return;
       }
+
+      attributesMap[attr.name] = oldAttributesMap[attr.name];
+
+      if (attributesMap[attr.name] === false) return;
+
+      attributesMap[attr.name] = true;
+      info.attributes[attr.name] = attr.value?.trim();
     });
 
     const getSelector = (node) => {
@@ -163,7 +174,9 @@ function extractElementInfo(element) {
 
     return info;
   }
-
+  if (attributesMap.textContent == null) {
+    delete attributesMap.textContent;
+  }
   return extractNode(element);
 }
 
@@ -173,6 +186,8 @@ function getAttributesMap() {
 
 function updateYAMLFiles() {
   try {
+    oldAttributesMap = JSON.parse(JSON.stringify(attributesMap));
+    // Remove $selector from attributesMap
     Object.keys(attributesMap).forEach((attr) => {
       if (attr !== "$selector") delete attributesMap[attr];
     });

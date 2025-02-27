@@ -67,10 +67,12 @@ function activate(context) {
     "JTool.showAttributesChecklist",
     async () => {
       const attributesMap = getAttributesMap();
-      const items = Object.keys(attributesMap).map((attr) => ({
-        label: attr,
-        picked: attributesMap[attr],
-      }));
+      const items = Object.keys(attributesMap)
+        .sort()
+        .map((attr) => ({
+          label: attr,
+          picked: attributesMap[attr],
+        }));
 
       const selectedItems = await vscode.window.showQuickPick(items, {
         canPickMany: true,
