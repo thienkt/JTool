@@ -159,6 +159,8 @@ function extractElementInfo(element) {
         : selector;
     };
 
+    attributesMap.$selector = oldAttributesMap.$selector;
+
     if (attributesMap.$selector) {
       getSelector(node);
     }
